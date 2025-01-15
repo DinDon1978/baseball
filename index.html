@@ -21,6 +21,8 @@
 			width: 80%; /* 新增這行，設定寬度為 2/3 */
 			margin-left: auto;  /* 新增這行，用於置中 */
 			margin-right: auto; /* 新增這行，用於置中 */
+			position: relative; /* 添加這行 */
+			z-index: 1; /* 添加這行 */			
 		}
 		
 		.sortable-drag {
@@ -33,6 +35,13 @@
 			opacity: 0.3;
 			background: #e5e7eb !important;
 		}
+		#playerList {
+			touch-action: pan-y; /* 允許垂直滑動 */
+			-webkit-overflow-scrolling: touch; /* 提升 iOS 滑動體驗 */
+			height: auto;
+			max-height: 70vh; /* 設定最大高度，確保可以滾動 */
+			overflow-y: auto;
+		}		
 	</style>
 </head>
 
@@ -173,8 +182,9 @@
                 forceFallback: true,
                 fallbackClass: 'sortable-fallback',
                 scroll: true,
-                scrollSensitivity: 80,
-                scrollSpeed: 20,
+				scrollSensitivity: 30, // 降低靈敏度
+				scrollSpeed: 10,      // 降低速度
+				touchAction: 'pan-y', // 添加這行
                 
                 onStart: function() {
                     document.body.classList.add('dragging');
