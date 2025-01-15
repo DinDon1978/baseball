@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>棒球打擊順序系統</title>
+    <title>大衛棒球 打擊/防守順序</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
@@ -55,12 +55,12 @@
             <div class="flex gap-2 justify-center">
                 <button onclick="exportData()" 
                         class="text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-lg transition-colors duration-200">
-                    匯出名單
+                    匯出名單(PC)
                 </button>
                 <input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(this)">
                 <button onclick="document.getElementById('importFile').click()" 
                         class="text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-lg transition-colors duration-200">
-                    匯入名單
+                    匯入名單(Phone)
                 </button>
             </div>
 
