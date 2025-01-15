@@ -18,11 +18,12 @@
 			-webkit-user-select: none;
 			user-select: none;
 			transition: transform 0.2s, box-shadow 0.2s;
-			width: 80%; /* 新增這行，設定寬度為 2/3 */
-			margin-left: 0;  /* 新增這行，用於置中 */
-			margin-right: auto; /* 新增這行，用於置中 */
-			position: relative; /* 添加這行 */
-			z-index: 1; /* 添加這行 */			
+			width: 80%;
+			margin-left: 0;
+			margin-right: auto;
+			position: relative;
+			z-index: 1;
+			padding: 0.5rem !important; /* 縮減內邊距 */
 		}
 		
 		.sortable-drag {
@@ -36,11 +37,12 @@
 			background: #e5e7eb !important;
 		}
 		#playerList {
-			touch-action: pan-y; /* 允許垂直滑動 */
-			-webkit-overflow-scrolling: touch; /* 提升 iOS 滑動體驗 */
+			touch-action: pan-y;
+			-webkit-overflow-scrolling: touch;
 			height: auto;
-			max-height: 70vh; /* 設定最大高度，確保可以滾動 */
+			max-height: 70vh;
 			overflow-y: auto;
+			gap: 0.5rem; /* 減少卡片間距 */
 		}		
 	</style>
 </head>
@@ -114,30 +116,28 @@
 			}
 			
 			playerList.innerHTML = players.map((player, index) => `
-				<div class="player-card flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200 shadow-sm mx-auto" data-id="${player.id}">
-					<div class="flex items-center flex-1 gap-3">
-						<div class="flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-600 rounded-full font-semibold">
+				<div class="player-card flex items-center gap-2 bg-white rounded-lg border border-gray-200 shadow-sm mx-auto" data-id="${player.id}">
+					<div class="flex items-center flex-1 gap-2">
+						<div class="flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full font-semibold text-sm">
 							${index + 1}
 						</div>
-						<div class="flex flex-col">
-							<span class="font-medium text-gray-700">${player.name}</span>
-							<div class="flex items-center mt-1">
-								<select 
-									class="text-sm border border-gray-200 rounded px-2 py-1"
-									onchange="updatePosition(${player.id}, this.value)"
-								>
-									<option value="">選擇守備位置</option>
-									${[1,2,3,4,5,6,7,8,9].map(pos => 
-										`<option value="${pos}" ${player.position == pos ? 'selected' : ''}>
-											${pos} ${getPositionName(pos)}
-										</option>`
-									).join('')}
-								</select>
-							</div>
+						<div class="flex flex-col gap-1">
+							<span class="font-medium text-gray-700 text-sm">${player.name}</span>
+							<select 
+								class="text-xs border border-gray-200 rounded px-1.5 py-0.5"
+								onchange="updatePosition(${player.id}, this.value)"
+							>
+								<option value="">選擇守備位置</option>
+								${[1,2,3,4,5,6,7,8,9].map(pos => 
+									`<option value="${pos}" ${player.position == pos ? 'selected' : ''}>
+										${pos} ${getPositionName(pos)}
+									</option>`
+								).join('')}
+							</select>
 						</div>
 					</div>
-					<button onclick="deletePlayer(${player.id})" class="text-gray-400 hover:text-red-500 p-2 rounded-full transition-colors">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+					<button onclick="deletePlayer(${player.id})" class="text-gray-400 hover:text-red-500 p-1 rounded-full transition-colors">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
 							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
 						</svg>
 					</button>
