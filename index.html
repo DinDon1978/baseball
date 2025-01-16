@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>大衛棒球 打擊/防守順序</title>
+    <title>棒球打擊防守順序</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 	<style>
@@ -36,14 +36,28 @@
 			opacity: 0.3;
 			background: #e5e7eb !important;
 		}
-		#playerList {
-			touch-action: pan-y;
-			-webkit-overflow-scrolling: touch;
-			height: auto;
-			max-height: 70vh;
-			overflow-y: auto;
-			gap: 0.5rem; /* 減少卡片間距 */
+		
+		.fixed-header {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			background-color: white;
+			z-index: 100;
+			padding: 1rem;
+		}
+		.content-wrapper {
+			padding-top: 200px; /* 根據固定區域的高度調整 */
 		}		
+		#playerList {
+			height: calc(100vh - 200px); /* 扣除固定區域的高度 */
+			display: flex;
+			flex-direction: column;
+		}
+		.player-card {
+			height: calc((100vh - 200px) / 9); /* 平分高度 */
+			min-height: 50px; /* 設定最小高度 */
+		}
 	</style>
 </head>
 
@@ -51,26 +65,25 @@
     <div class="container mx-auto px-3 py-4 max-w-md">
         <div class="bg-white rounded-xl shadow-lg p-4 space-y-4">
             <div class="text-center">
-                <h1 class="text-2xl font-bold text-gray-800 mb-1">大衛棒球打擊防守順序</h1>
+                <h1 class="text-2xl font-bold text-gray-800 mb-1">棒球打擊防守順序</h1>
                 <p class="text-gray-600 text-sm">長按卡片可拖曳調整打擊順序</p>
             </div>
 
 			<form id="addPlayerForm" class="space-y-3">
 				<div class="flex gap-2">
 					<input type="text" id="playerName" required
-						   class="w-40 px-3 py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+						   class="w-[55%] px-3 py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
 						   placeholder="輸入選手名稱">
 					<button type="submit" 
-							class="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+							class="w-[15%] bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
 						新增
 					</button>
 					<button type="button" onclick="exportData()" 
-							class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
+							class="w-[15%] bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
 						匯出
 					</button>
-					<input type="file" id="importFile" accept=".json" style="display: none" onchange="importData(this)">
 					<button type="button" onclick="document.getElementById('importFile').click()" 
-							class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
+							class="w-[15%] bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
 						匯入
 					</button>
 				</div>
@@ -113,32 +126,34 @@
 			}
 			
 			playerList.innerHTML = players.map((player, index) => `
-				<div class="player-card flex items-center gap-2 bg-white rounded-lg border border-gray-200 shadow-sm mx-auto" data-id="${player.id}">
-					<div class="flex items-center flex-1 gap-2">
+				<div class="player-card flex items-center justify-between gap-2 bg-white rounded-lg border border-gray-200 shadow-sm mx-auto" data-id="${player.id}">
+					<div class="flex items-center gap-2">
 						<div class="flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full font-semibold text-sm">
 							${index + 1}
 						</div>
-						<div class="flex flex-col gap-1">
-							<span class="font-medium text-gray-700 text-sm">${player.name}</span>
-							<select 
-								class="text-xs border border-gray-200 rounded px-1.5 py-0.5"
-								onchange="updatePosition(${player.id}, this.value)"
-							>
-								<option value="">選擇守備位置</option>
-								${[1,2,3,4,5,6,7,8,9].map(pos => 
-									`<option value="${pos}" ${player.position == pos ? 'selected' : ''}>
-										${pos} ${getPositionName(pos)}
-									</option>`
-								).join('')}
-							</select>
-						</div>
+						<span class="font-medium text-gray-700 text-sm">${player.name}</span>
 					</div>
-					<button onclick="deletePlayer(${player.id})" class="text-gray-400 hover:text-red-500 p-1 rounded-full transition-colors">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-						</svg>
-					</button>
+					<div class="flex items-center gap-2">
+						<select 
+							class="text-xs border border-gray-200 rounded px-1.5 py-0.5"
+							onchange="updatePosition(${player.id}, this.value)"
+						>
+							<option value="">守備位置</option>
+							${[1,2,3,4,5,6,7,8,9].map(pos => 
+								`<option value="${pos}" ${player.position == pos ? 'selected' : ''}>
+									${pos} ${getPositionName(pos)}
+								</option>`
+							).join('')}
+						</select>
+						<button onclick="deletePlayer(${player.id})" class="text-gray-400 hover:text-red-500 p-1 rounded-full transition-colors">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+								<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+							</svg>
+							
+						</button>
+					</div>
 				</div>
+				
 			`).join('');
 
 			document.getElementById('playerCount').textContent = players.length;
